@@ -1,0 +1,6 @@
+---
+users_dataset_filepath: data/users.csv
+edge_servers_dataset_filepath: data/edge-servers.csv
+
+min_latency: 1
+max_latency: 100

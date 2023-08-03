@@ -1,0 +1,38 @@
+---
+all:
+  children:
+    haydn:
+      hosts:
+        rll-haydn:
+          ansible_host: 192.168.167.100
+        rll-h01:
+          ansible_host: 192.168.167.101
+        rll-h02:
+          ansible_host: 192.168.167.102
+        rll-h03:
+          ansible_host: 192.168.167.103
+    mozart:
+      hosts:
+        rll-mozart:
+          ansible_host: 192.168.167.120
+        rll-m01:
+          ansible_host: 192.168.167.121
+        rll-m02:
+          ansible_host: 192.168.167.122
+        rll-m03:
+          ansible_host: 192.168.167.123
+    strauss:
+      hosts:
+        rll-strauss:
+          ansible_host: 192.168.167.130
+        rll-s01:
+          ansible_host: 192.168.167.131
+    beethoven:
+      hosts:
+        rll-beethoven:
+          ansible_host: 192.168.167.170
+        rll-b01:
+          ansible_host: 192.168.167.171
+  vars:
+    ansible_user: pi
+    ansible_password: "{{ pi_password }}"
