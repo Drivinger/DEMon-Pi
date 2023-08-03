@@ -13,7 +13,9 @@ ansible-galaxy install geerlingguy.pip
 
 ## Configure RPi devices and deploy DEMon container
 ```shell
-ansible-playbook -i ansible/inventory.yml ansible/install.yml -e @ansible/secrets.yml --ask-vault-pass
+cd ansible
+ansible-playbook -i inventory.yml install.yml -e @secrets.yml --ask-vault-pass
+cd ..
 ```
 
 ## Run the experiment
