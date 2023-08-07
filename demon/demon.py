@@ -99,9 +99,13 @@ def compare_and_update_node_data(inc_data):
         data_to_send_to_monitor = node.data[new_time_key]
 
     to_send = {'data': data_to_send_to_monitor, 'data_flow_per_round': node.data_flow_per_round[inc_round]}
-    # TODO: Session here
-    node.session_to_monitoring.post(
-        'http://{}:4000/receive_node_data?ip={}&port={}&round={}'.format(node.monitoring_address, node.ip, node.port,
+    # TODO: Session here# 
+    #Shashi- posting to external config.. Receive data in monitoring... 
+
+    if node.is_send_data_back is True:
+
+        node.session_to_monitoring.post(
+            'http://{}:4000/receive_node_data?ip={}&port={}&round={}'.format(node.monitoring_address, node.ip, node.port,
                                                                          inc_round), json=to_send)
 
 
@@ -114,14 +118,15 @@ def start_node():
     target_count = init_data["target_count"]
     gossip_rate = init_data["gossip_rate"]
     node_ip = init_data["node_ip"]
+    is_send_data_back = init_data["is_send_data_back"]
     node = Node.instance()
     time.sleep(10)
     client_thread = threading.Thread(target=node.start_gossiping, args=(target_count, gossip_rate))
     counter_thread = threading.Thread(target=node.start_gossip_counter)
     node.set_params(node_ip,
                     request.headers.get('Host').split(':')[1], 0,
-                    node_list, {}, True, 0, 0, monitoring_address, database_address,
-                    client_thread=client_thread, counter_thread=counter_thread, data_flow_per_round={})
+                    node_list, {}, True, 0, 0, monitoring_address,  database_address,  is_send_data_back = is_send_data_back,
+                    client_thread=client_thread, counter_thread=counter_thread,  data_flow_per_round={})
     client_thread.start()
     counter_thread.start()
     return "OK"
@@ -133,12 +138,12 @@ def register_new_node():
     Node.instance().node_list.append(request.get_json())
     return "OK"
 
-
+# With all the current and past time stamps -> Whole gossip cycle
 @gossip.route('/get_data_from_node', methods=['GET'])
 def get_data_from_node():
     return Node.instance().data
 
-
+# Recent time stamp data..
 @gossip.route('/get_recent_data_from_node', methods=['GET'])
 def get_recent_data_from_node():
     data = Node.instance().data
@@ -149,6 +154,10 @@ def get_recent_data_from_node():
 @gossip.route('/get_nodelist_from_node', methods=['GET'])
 def get_nodelist_from_node():
     return json.dumps(Node.instance().node_list)
+
+@gossip.route('/hello_world', methods=['GET'])
+def get_hello_from_node():
+    return "Hello from gossip agent!"
 
 
 if __name__ == "__main__":

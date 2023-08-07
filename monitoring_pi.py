@@ -3,6 +3,8 @@ import configparser
 import requests
 from flask import Flask, request
 import socket
+import utils
+from config import settings
 
 monitoring_demon = Flask(__name__)
 parser = configparser.ConfigParser()
@@ -14,9 +16,11 @@ def prepare_experiment(server_ip, node_list):
     # get ips from pis
     target_count = parser.getint('DemonParam', 'target_count')
     gossip_rate = parser.getint('DemonParam', 'gossip_rate')
+    is_send_data_back = parser.getboolean( 'DemonParam', 'is_send_data_back')
 
-    start_all_nodes(node_list, server_ip, target_count, gossip_rate)
+    start_all_nodes(node_list, server_ip, target_count, gossip_rate, is_send_data_back)
     pass
+
 @monitoring_demon.route('/receive_node_data', methods=['POST'])
 def update_data_entries_per_ip():
     global experiment
@@ -39,15 +43,15 @@ def update_data_entries_per_ip():
     return "OK"
 
 
-def start_all_nodes(node_list, monitoring_address, target_count, gossip_rate):
+def start_all_nodes(node_list, monitoring_address, target_count, gossip_rate, is_send_data_back):
     for i, node in enumerate(node_list):
-        start_node(i, monitoring_address, node_list, target_count, gossip_rate)
+        start_node(i, monitoring_address, node_list, target_count, gossip_rate, is_send_data_back)
 
 
-def start_node(index, monitoring_address, node_list, target_count, gossip_rate):
+def start_node(index, monitoring_address, node_list, target_count, gossip_rate, is_send_data_back ):
     to_send = {"node_list": node_list, "target_count": target_count, "gossip_rate": gossip_rate,
                "database_address": "", "monitoring_address": monitoring_address,
-               "node_ip": node_list[index]["ip"]}
+               "node_ip": node_list[index]["ip"], "is_send_data_back": is_send_data_back }
     try:
         a = requests.post("http://{}:{}/start_node".format(node_list[index]["ip"], node_list[index]["port"]), json=to_send)
         print(a.text)
@@ -78,17 +82,27 @@ def reset_node(ip, port):
 def start_demon():
     server_ip = socket.gethostbyname(socket.gethostname())
 
-    node_list = [{"id": ", "ip": "", "port": 5000}]
+    #  Shashi- from config servers.. List of ser er objects..
+
+    node_list = [
+             {"id": " ", "ip": "", "port": 5000},
+             {}, 
+            {}
+               ]
+    # node_list = _get_server_data()
 
     print("Server IP: {}".format(server_ip))
     # multiple runs?
     prepare_experiment(server_ip, node_list)
     print("Experiment prepared")
+    # TODO, not needed update and reset, make it endpoint.. 
     update_during_experiment()
     print("Experiment finished")
+
     reset_experiment(node_list)
     print("Experiment reset")
     return "OK - Experiment finished"
+
 
 if __name__ == "__main__":
     monitoring_demon.run(host='0.0.0.0', port=4000, debug=False, threaded=True)

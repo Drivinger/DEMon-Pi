@@ -4,3 +4,43 @@ edge_servers_dataset_filepath: data/edge-servers.csv
 
 min_latency: 1
 max_latency: 100
+failure_rate: 0.5
+
+
+#Refers to the number of nodes the params are running on
+node_range: [12]
+
+#Refers to the number to targets a node sends a message to each round
+target_count: 4
+
+#Describes the interval[s] between a message
+gossip_rate: 3
+
+#Describes how many runs are made per param setting
+#total number of DEMON = RUN * size(GossipRate) * size(TargetCountRange) * size(PodRange)
+runs: 1
+
+#if digest mode is set to 1, digest mode starts
+DigestMode: 1
+
+#if continue_after_convergence is set to 1, the monitoring continues after the system converged
+continue_after_convergence: 1
+
+#Select at which Round (after System converged) the monitoring should stop
+#MaxRound = 10
+
+#interval  x rounds (default 600 ~ 10 min): TODO: implement checkpoint to push into database (recent/actual data from node);
+
+
+
+#QueryLogic: if 0 -> query logic is used
+QueryLogic: 1
+
+#Debug Level: if > 0 -> logs are stored in database
+DebugLevel: 1
+
+#monitoring_address =128.131.168.72
+docker_ip:  ''
+is_send_data_back: True
+
+db_file: demonDB.db
