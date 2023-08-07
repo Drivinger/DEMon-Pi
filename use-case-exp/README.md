@@ -19,6 +19,8 @@ ansible-playbook -i inventory.yml deploy-demon.yml -e @secrets.yml --ask-vault-p
 cd ..
 ```
 
+> To limit the nodes where to apply the Ansible playbook, add `--limit HOSTNAME|GROUP_NAME`
+
 ## Run the experiment
 ```shell
 python experiment.py
