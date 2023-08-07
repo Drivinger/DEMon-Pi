@@ -124,7 +124,7 @@ class Node:
                 logging.error("Error while sending message to node {}: {}".format(n, e))
 
     def set_params(self, ip, port, cycle, node_list, data, is_alive, gossip_counter, failure_counter,
-                   monitoring_address,  database_address,  is_send_data_back, client_thread, counter_thread, is_send_data_back, data_flow_per_round):
+                   monitoring_address,  database_address,  is_send_data_back, client_thread, counter_thread, data_flow_per_round):
         self.ip = ip
         self.port = port
         self.monitoring_address = monitoring_address
