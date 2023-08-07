@@ -2,25 +2,7 @@
 - hosts: all
   gather_facts: true
   vars:
-    pip_install_packages:
-      - name: docker
-    docker_edition: ce
-    docker_packages:
-      - "docker-{{ docker_edition }}"
-      - "docker-{{ docker_edition }}-cli"
-    docker_apt_arch: armhf
-    docker_install_compose: false
-    docker_install_compose_plugin: true
-    docker_compose_package: docker-compose-plugin
-    docker_compose_package_state: present
-    docker_users:
-      - "{{ ansible_user }}"
     demon_repo: https://github.com/Drivinger/DEMon-Pi
-
-  roles:
-    - geerlingguy.pip
-    - { role: geerlingguy.docker, become: yes }
-
   tasks:
     - name: Download DEMon repository
       ansible.builtin.git:
@@ -34,6 +16,8 @@
         name: demon:latest
         build:
           path: "home/{{ ansible_user }}/DEMon-Pi/demon"
+        force_source: true
+        force_tag: true
         source: build
     
     - name: Start DEMon container

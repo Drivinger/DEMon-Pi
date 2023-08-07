@@ -14,7 +14,8 @@ ansible-galaxy install geerlingguy.pip
 ## Configure RPi devices and deploy DEMon container
 ```shell
 cd ansible
-ansible-playbook -i inventory.yml install.yml -e @secrets.yml --ask-vault-pass
+ansible-playbook -i inventory.yml install-docker.yml -e @secrets.yml --ask-vault-pass
+ansible-playbook -i inventory.yml deploy-demon.yml -e @secrets.yml --ask-vault-pass
 cd ..
 ```
 
