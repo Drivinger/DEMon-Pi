@@ -55,7 +55,7 @@ def _perform_query(user: dict, ranked_servers: list[dict]):
                 continue
             target_nodes.append(node)
 
-    _perfrom_remote_query(target_nodes)
+    # _perfrom_remote_query(target_nodes)
    
 
 def _perfrom_remote_query(target_servers: list[dict]):
@@ -81,10 +81,6 @@ def _get_failed_nodes (ranked_servers: list[dict]):
 
 
 
-if __name__ == '__main__':
-    main()
-
-
 def main():
     users = utils.load_csv_dataset_as_dict(settings.users_dataset_filepath)
     edge_servers = utils.load_csv_dataset_as_dict(settings.edge_servers_dataset_filepath)
@@ -96,6 +92,10 @@ def main():
     # start gossip monitoring inside the Rpis
     utils.start_all_nodes (edge_servers)
     # prepare for queries
-    for user in users:
-        servers_by_latency = _sort_edge_serves_by_latency(user, edge_servers)
-        _perform_query(user, servers_by_latency)
+    # for user in users:
+    #     servers_by_latency = _sort_edge_serves_by_latency(user, edge_servers)
+    #     _perform_query(user, servers_by_latency)
+
+
+if __name__ == '__main__':
+    main()
