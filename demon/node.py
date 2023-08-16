@@ -80,8 +80,10 @@ class Node:
         else:
             print("No data in data dict", flush=True)
             self.data[new_time_key] = {}
+
         self.data[new_time_key][self.ip + ':' + self.port] = get_new_data()
         random_nodes = self.get_random_nodes(self.node_list, target_count)
+        
         # latest_entry = max(self.data.keys(), key=int)
         # latest_data = self.data[latest_entry]
         for n in random_nodes:
@@ -142,7 +144,7 @@ class Node:
         self.data_flow_per_round = data_flow_per_round
 
     def get_random_nodes(self, node_list, target_count):
-        print("### In randome  selection, node list length:{}, target count :{}".format(len(node_list), target_count))
+        logging.info("### In random node  selection, node list length:{}, target count :{}".format(len(node_list), target_count))
 
         node_list = [n for n in node_list if n["ip"] != self.ip and n["port"] != self.port and n["is_alive"]]
         random_os_data = os.urandom(10)
