@@ -146,12 +146,19 @@ class Node:
     def get_random_nodes(self, node_list, target_count):
 
         # node_list = [n for n in node_list if n["ip"] != self.ip and n["port"] != self.port and n["is_alive"]]
-        node_list = [n for n in node_list if n["ip"] != self.ip and n["is_alive"]]
+        # TODO- Shashi, check is alive property
+        # node_list = [n for n in node_list if n["ip"] != self.ip and n["is_alive"]]
+        node_list = []
+
+        for node in node_list:
+            if self.ip == node['ip']:
+                continue
+            node_list.append(node)
+
         logging.info("### In random node  selection, node list length:{}, target count :{}".format(len(node_list), target_count))
 
         # random_os_data = os.urandom(10)
         # seed = int.from_bytes(random_os_data, byteorder="big")
         # random.seed(seed)
         # fail_nodes = random.sample(node_list,  target_count)
-
         return random.sample(node_list, target_count)
