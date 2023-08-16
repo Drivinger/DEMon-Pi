@@ -146,4 +146,5 @@ class Node:
         random_os_data = os.urandom(16)
         seed = int.from_bytes(random_os_data, byteorder="big")
         random.seed(seed)
+        print("### Node list length:{}, target count :{}".format(len(node_list), target_count))
         return random.sample(node_list, target_count)
