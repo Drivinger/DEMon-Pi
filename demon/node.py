@@ -142,9 +142,10 @@ class Node:
         self.data_flow_per_round = data_flow_per_round
 
     def get_random_nodes(self, node_list, target_count):
+        print("### In randome  selection, node list length:{}, target count :{}".format(len(node_list), target_count))
+
         node_list = [n for n in node_list if n["ip"] != self.ip and n["port"] != self.port and n["is_alive"]]
         random_os_data = os.urandom(10)
         seed = int.from_bytes(random_os_data, byteorder="big")
         random.seed(seed)
-        print("### Node list length:{}, target count :{}".format(len(node_list), target_count))
         return random.sample(node_list, target_count)
