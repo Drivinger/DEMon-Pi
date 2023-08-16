@@ -41,6 +41,6 @@ DebugLevel: 1
 
 #monitoring_address =128.131.168.72
 docker_ip:  ''
-is_send_data_back: True
+is_send_data_back: False
 
 db_file: demonDB.db

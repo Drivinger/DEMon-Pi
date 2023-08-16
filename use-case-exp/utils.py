@@ -28,6 +28,7 @@ def start_node(index, external_monitoring_agent_ip, edge_servers, target_count, 
     print("Sending the start  request to the node. IP:{}".format(edge_servers[index]["ip"]))
     try:
         response = requests.post("http://{}:{}/start_node".format(edge_servers[index]["ip"], edge_servers[index]["port"]), json=to_send)
-        print("Starting the node. Response: {}".format(response.text))
+        print("Starting the node {}, port:{}, Node list:{}. Response: {}".format(edge_servers[index]["ip"], edge_servers[index]["port"], edge_servers, response.text))
     except Exception as e:
         print("Node with ip {} not started: {}".format(edge_servers[index]["ip"], e))
+
