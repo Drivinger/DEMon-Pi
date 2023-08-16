@@ -148,17 +148,18 @@ class Node:
         # node_list = [n for n in node_list if n["ip"] != self.ip and n["port"] != self.port and n["is_alive"]]
         # TODO- Shashi, check is alive property
         # node_list = [n for n in node_list if n["ip"] != self.ip and n["is_alive"]]
-        node_list = []
-
+        new_node_list = []
+        logging.info("### In random node  selection, OLD list length:{}, target count :{}".format(len(new_node_list), target_count))
+   
         for node in node_list:
             if self.ip == node['ip']:
                 continue
-            node_list.append(node)
+            new_node_list.append(node)
 
-        logging.info("### In random node  selection, node list length:{}, target count :{}".format(len(node_list), target_count))
+        logging.info("### In random node after filter,, NEW list length:{}, target count :{}".format(len(new_node_list), target_count))
 
         # random_os_data = os.urandom(10)
         # seed = int.from_bytes(random_os_data, byteorder="big")
         # random.seed(seed)
         # fail_nodes = random.sample(node_list,  target_count)
-        return random.sample(node_list, target_count)
+        return random.sample(new_node_list, target_count)
