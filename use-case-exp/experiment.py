@@ -48,26 +48,27 @@ def _perform_query(user: dict, ranked_servers: list[dict]):
     fail_nodes = _get_failed_nodes(ranked_servers)
     target_nodes = []
     for node in ranked_servers:
-        for index, node in ranked_servers:
             # print(f"\t#{counter}: {s}")
-            if node in fail_nodes:
-                print("Failed node from ranked servers")
-                continue
-            target_nodes.append(node)
+        if node in fail_nodes:
+            continue
+        target_nodes.append(node)
+    
+    print("Total Nodes: {} and Failed Nodes: {} and Target Nodes:{}".format(len(ranked_servers), len (fail_nodes), len(target_nodes)))
 
     # _perfrom_remote_query(target_nodes)
    
 
 def _perfrom_remote_query(target_servers: list[dict]):
     # API call
-    for index, node in target_servers:
+    for node in target_servers:
         try:       
-            response = requests.get("http://{}:{}/reset_get_recent_data_from_nodenode".format(target_servers[index]["ip"], 
-                                                                                              target_servers[index]["port"]), timeout=120)
-            print("Remote query  response: {}".format(response.text))  
+            # response = requests.get("http://{}:{}/get_recent_data_from_node".format(node['ip'],  node["port"]), timeout=120)
+            response = requests.get("http://{}:{}/get_data_from_node".format(node['ip'],  node["port"]), timeout=120)
+            
+            print("Remote query  to node: {} response: {}".format(node['ip'],  response.text))  
 
         except Exception as e:
-            print("Node with ip {} has error: {}".format(target_servers[index]["ip"], e))
+            print("Node with ip {} has error: {}".format(node["ip"], e))
 
         # TODO= Query logic
    
@@ -75,9 +76,10 @@ def _perfrom_remote_query(target_servers: list[dict]):
     
 def _get_failed_nodes (ranked_servers: list[dict]):
     number_of_failed_nodes = (int)(len(ranked_servers) * settings.failure_rate)
-    fail_nodes= [random.choice(ranked_servers) for i in  range(number_of_failed_nodes)]
-    return fail_nodes
+    print("Number of failed nodes:{}".format(number_of_failed_nodes))
+    fail_nodes = random.sample(ranked_servers,  number_of_failed_nodes)
 
+    return fail_nodes
 
 
 
@@ -92,9 +94,9 @@ def main():
     # start gossip monitoring inside the Rpis
     utils.start_all_nodes (edge_servers)
     # prepare for queries
-    # for user in users:
-    #     servers_by_latency = _sort_edge_serves_by_latency(user, edge_servers)
-    #     _perform_query(user, servers_by_latency)
+    for user in users:
+        servers_by_latency = _sort_edge_serves_by_latency(user, edge_servers)
+        _perform_query(user, servers_by_latency)
 
 
 if __name__ == '__main__':
