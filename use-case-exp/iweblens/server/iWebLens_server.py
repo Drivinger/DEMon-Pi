@@ -43,7 +43,7 @@ def load_model(configpath,weightspath):
     net = cv2.dnn.readNetFromDarknet(configpath, weightspath)
     return net
 
-def get_predection(image,net,LABELS,COLORS):
+def get_prediction(image,net,LABELS,COLORS):
     
     (H, W) = image.shape[:2]
     # determine only the *output* layer names that we need from YOLO
@@ -173,7 +173,7 @@ def main():
         # load the neural net.  Should be local to this method as its multi-threaded endpoint
         nets = load_model(CFG, Weights)
         print  ("*******Model Loaded")
-        result = get_predection(image, nets, Lables, Colors)
+        result = get_prediction(image, nets, Lables, Colors)
         print  ("*******Prediction Done******")
 
         response = {}
