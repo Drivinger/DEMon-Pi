@@ -1,0 +1,16 @@
+## to create a docker image
+
+sudo docker build -t my_server:latest .
+
+## To run the docker container
+
+sudo docker run -i -p 5000:5000 my_server:latest
+
+
+## call the webservice running in docker container
+## From the client directory
+
+python iWebLens_client.py data/input_images/inputfolder_xx  http://IPAddress:5000/api/object_detection
+
+
+
