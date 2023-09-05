@@ -2,3 +2,5 @@ Flask
 pybase64
 jsonpickle
 pillow
+numpy
+opencv-python
