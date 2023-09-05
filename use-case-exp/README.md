@@ -11,11 +11,12 @@ ansible-galaxy install geerlingguy.docker
 ansible-galaxy install geerlingguy.pip
 ```
 
-## Configure RPi devices and deploy DEMon container
+## Configure RPi devices, deploy DEMon container, and deploy iWebLens server
 ```shell
 cd ansible
 ansible-playbook -i inventory.yml install-docker.yml -e @secrets.yml --ask-vault-pass
 ansible-playbook -i inventory.yml deploy-demon.yml -e @secrets.yml --ask-vault-pass
+ansible-playbook -i inventory.yml deploy-iweblens.yml -e @secrets.yml --ask-vault-pass
 cd ..
 ```
 

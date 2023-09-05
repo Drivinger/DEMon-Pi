@@ -1,0 +1,30 @@
+---
+- hosts: all
+  gather_facts: true
+  vars:
+    demon_repo: https://github.com/Drivinger/DEMon-Pi
+  tasks:
+    - name: Download DEMon repository
+      ansible.builtin.git:
+        repo: "{{ demon_repo }}"
+        dest: "home/{{ ansible_user }}/DEMon-Pi"
+        clone: true
+        force: true
+    
+    - name: Build iWebLens server Docker image
+      community.general.docker_image:
+        name: iweblens-server:latest
+        build:
+          path: "home/{{ ansible_user }}/DEMon-Pi/use-case-exp/iweblens/server"
+        force_source: true
+        force_tag: true
+        source: build
+    
+    - name: Start iWebLens- server container
+      community.docker.docker_container:
+        image: iweblens-server:latest
+        name: iweblens-server
+        published_ports:
+          - 5001:5000
+        recreate: true
+        restart_policy: on-failure
