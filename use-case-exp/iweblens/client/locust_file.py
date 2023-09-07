@@ -2,7 +2,7 @@ import base64
 import glob
 import random
 import uuid
-from locust import task, events, FastHttpUser
+from locust import task, events, FastHttpUser, between
 
 @events.init_command_line_parser.add_listener
 def _(parser):
@@ -10,6 +10,7 @@ def _(parser):
 
 
 class MobileUser(FastHttpUser):
+    wait_time = between(1, 10)
     images = []
 
     @task
