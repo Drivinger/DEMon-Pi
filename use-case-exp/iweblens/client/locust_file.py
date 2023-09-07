@@ -27,7 +27,7 @@ class MobileUser(FastHttpUser):
         with open (image, 'rb') as image_file:
             payload['image'] =  base64.b64encode(image_file.read()).decode('utf-8')
 
-        with self.rest("POST", "/object_detection", json=payload) as resp:
+        with self.rest(method="POST", url="/object_detection", json=payload) as resp:
             if resp.js is None:
                 print(f"An error occurred: : {resp.status_code}.")
                 pass # No need to do anything, already marked as failed

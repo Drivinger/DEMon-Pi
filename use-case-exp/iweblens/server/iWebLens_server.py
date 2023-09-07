@@ -1,4 +1,3 @@
-# import the necessary packages
 import numpy as np
 import sys
 import time
@@ -10,6 +9,7 @@ import json
 from PIL import Image
 import threading
 import base64
+
 # construct the argument parse and parse the arguments
 confthres = 0.3
 nmsthres = 0.1
@@ -39,7 +39,7 @@ def get_config(config_path):
 
 def load_model(configpath,weightspath):
     # load our YOLO object detector trained on COCO dataset (80 classes)
-    print("[INFO] loading YOLO from disk...")
+    print("Loading YOLO from disk...")
     net = cv2.dnn.readNetFromDarknet(configpath, weightspath)
     return net
 
@@ -63,7 +63,7 @@ def get_prediction(image,net,LABELS,COLORS):
     end = time.time()
 
     # show timing information on YOLO
-    print("[INFO] YOLO took {:.6f} seconds".format(end - start))
+    print("YOLO took {:.6f} seconds".format(end - start))
 
     # initialize our lists of detected bounding boxes, confidences, and
     # class IDs, respectively
@@ -137,19 +137,15 @@ if len(sys.argv) != 2:
 
 yolo_path  = str(sys.argv[1])
 
-# labelsPath= "coco.names"
-# cfgpath= "yolov3.cfg"
-# wpath= "yolov3.weights"
-
 ## Yolov3-tiny versrion
-labelsPath= "coco.names"
-cfgpath= "yolov3-tiny.cfg"
-wpath= "yolov3-tiny.weights"
+labels_path = "coco.names"
+configs_path = "yolov3-tiny.cfg"
+weights_path = "yolov3-tiny.weights"
 
-Lables=get_labels(labelsPath)
-CFG=get_config(cfgpath)
-Weights=get_weights(wpath)
-Colors=get_colors(Lables)
+labels = get_labels(labels_path)
+configs = get_config(configs_path)
+weights = get_weights(weights_path)
+colors = get_colors(labels)
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -157,37 +153,35 @@ app = Flask(__name__)
 @app.route('/api/object_detection', methods=['POST'])
 def main():
     try:
-
-        #print(" {}  Processing Image: {}".format(threading.current_thread().getName(), request.get_data() ))
         # load our input image and grab its spatial dimensions
-        data=  request.get_json(force = True)
-        data = json.loads(data)
+        data = request.json
+
         id = data['id']
-        print("Id: {}".format(id))
+        print(f"Id: {id}")
+
         img = data['image']
         img = base64.b64decode(img)
         img = Image.open(io.BytesIO(img))
         npimg=np.array(img)
         image=npimg.copy()
         image=cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
+
         # load the neural net.  Should be local to this method as its multi-threaded endpoint
-        nets = load_model(CFG, Weights)
-        print  ("*******Model Loaded")
-        result = get_prediction(image, nets, Lables, Colors)
-        print  ("*******Prediction Done******")
+        nets = load_model(configs, weights)
+        print("### Model Loaded ###")
+        result = get_prediction(image, nets, labels, colors)
+        print("### Prediction Done ###")
 
         response = {}
         response['id'] = id
         response['objects'] = result
+
         # return the  result
-        print("Result:{}".format(result))
-        # return response
+        print(f"Result: {result}")
         return jsonify(response)
-        #return "Hello World!"
-        # return  result
     except Exception as e:
 
-        print("Exception in webservice call: {}".format(e))
+        print(f"Exception in webservice call: {e}")
 
 @app.route('/api/hello_world', methods=['GET'])
 def hello_world():
@@ -202,8 +196,7 @@ def hello_world():
         # # return the  result
         return jsonify(response)
     except Exception as e:
-
-        print("Exception in hello world webservice call: {}".format(e))
+        print(f"Exception in hello world webservice call: {e}")
 
     # start flask app
 if __name__ == '__main__':
