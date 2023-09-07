@@ -3,7 +3,7 @@ import subprocess
 import sys
 
 def main():
-    with open("hosts.yaml") as f:
+    with open("hosts.yml") as f:
         hosts = yaml.load(f, Loader=yaml.FullLoader)
     try:
         processes = []
