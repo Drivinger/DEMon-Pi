@@ -1,7 +1,7 @@
 ##base image
-FROM ubuntu:18.04
+FROM rpiguru/docker-python3-opencv-arm:armv7hf-latest
 # install required packages
-RUN apt-get update -y && apt-get install -y python3-pip python3-dev libsm6 libxext6 libxrender-dev ffmpeg
+RUN apt-get update -y && apt-get install -y libsm6 libxext6 libxrender-dev ffmpeg
 RUN pip3 install --upgrade pip
 
 WORKDIR /app
