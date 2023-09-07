@@ -37,5 +37,5 @@ class MobileUser(FastHttpUser):
                 resp.failure(f"'id' had an unexpected value: {resp.js['id']}.")
     
     def on_start(self):
-        for image_file in glob.iglob(f"{self.environment.parsed_options.my_argument}/*.jpg"):
+        for image_file in glob.iglob(f"{self.environment.parsed_options.images_folder}/*.jpg"):
             self.images.append(image_file)
