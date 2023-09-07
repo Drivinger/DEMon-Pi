@@ -20,7 +20,7 @@
         force_tag: true
         source: build
     
-    - name: Start iWebLens- server container
+    - name: Start iWebLens server container
       community.docker.docker_container:
         image: iweblens-server:latest
         name: iweblens-server
