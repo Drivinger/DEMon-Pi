@@ -1,7 +1,12 @@
 import csv
+import glob
+import random
 from config import settings
 import requests
 import socket
+import uuid
+import base64
+import json
 
 def load_csv_dataset_as_dict(filepath: str):
     with open(filepath, 'r') as file:
@@ -32,3 +37,36 @@ def start_node(index, external_monitoring_agent_ip, edge_servers, target_count, 
     except Exception as e:
         print("Node with ip {} not started: {}".format(edge_servers[index]["ip"], e))
 
+def offload_object_detection_task(node_ip):
+
+    try:
+        # Get random image from the images folder
+        images = []
+        for image_file in glob.iglob(f"{settings.sample_image_dataset_filepath}/*.jpg"):
+            images.append(image_file)
+        image = random.choice(images)
+
+        # object_detection API endopint
+        url = f"http://{node_ip}:{settings.app_port}/api/object_detection"
+
+        payload = {}
+        #generate uuid for image
+        id = uuid.uuid5(uuid.NAMESPACE_OID, image)
+        payload['id'] = str(id)
+
+        # Encode image into base64 string
+        with open (image, 'rb') as image_file:
+            payload['image'] = base64.b64encode(image_file.read()).decode('utf-8')
+
+        print(f"Sending request to: {url}")
+
+        headers = {'Accept': 'application/json'}
+        response = requests.post(url, json=payload, headers=headers)
+        if response.ok:
+            print(response.json())
+        else:
+            print(f"An error occurred offloading request to node {node_ip} (status code: {response.status_code})")
+            print(f"{response.json()}")
+
+    except Exception as e:
+        print(f"Exception in offloading request: {e}")

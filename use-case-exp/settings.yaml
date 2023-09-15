@@ -2,6 +2,8 @@
 users_dataset_filepath: data/users.csv
 edge_servers_dataset_filepath: data/edge-servers.csv
 
+sample_image_dataset_filepath: iweblens/client/inputfolder
+app_port: 5001
 min_latency: 1
 max_latency: 100
 failure_rate: 0.5
