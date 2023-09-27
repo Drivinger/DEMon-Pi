@@ -79,7 +79,7 @@ class Node:
             target_count, gossip_rate, len(self.node_list)),
             flush=True)
         while self.is_alive:
-            if self.push_mode:
+            if self.push_mode == "1":
                 print("Pushing data", flush=True)
                 if self.cycle % 3 == 0 and self.cycle != 0:
                     self.push_latest_data_and_delete_after_push()
@@ -169,7 +169,7 @@ class Node:
 
             requested_keys = r_metadata_and_updated.json()['requested_keys']
             requested_data = self.prepare_requested_data(new_time_key, requested_keys)
-            response = requests.post(
+            response = requests.get(
                 'http://' + n["ip"] + ':' + '5000' + '/receive_message?inc_round={}'.format(self.cycle),
                 json=requested_data)
             self.update_own_data(r_metadata_and_updated.json()['updates'], new_time_key)

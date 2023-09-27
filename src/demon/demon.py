@@ -21,7 +21,7 @@ def receive_message():
     return "OK"
 
 
-@gossip.route('/metadata', methods=['POST'])
+@gossip.route('/metadata', methods=['GET'])
 def get_metadata():
     if not Node.instance().is_alive:
         # reset_node()
@@ -98,7 +98,7 @@ def reset_node():
     node.is_alive = False
     node.client_thread.join()
     node.counter_thread.join()
-    node.set_params(None, None, 0, None, {}, False, 0, 0, None, None, None, None, {}, time_mode=-1, push_mode=-1)
+    node.set_params(None, None, 0, None, {}, False, 0, 0, None, None, None, None, {}, push_mode=0)
     return "OK"
 
 
@@ -168,7 +168,7 @@ def compare_and_update_node_data(inc_data):
         data_to_send_to_monitor = node.data[new_time_key]
     to_send = {'data': data_to_send_to_monitor, 'data_flow_per_round': node.data_flow_per_round[node.cycle]}
     # TODO: Session here
-    if node.is_send_data_back is True:
+    if node.is_send_data_back == "1":
         node.session_to_monitoring.post(
             'http://{}:{}/receive_node_data?ip={}&port={}&round={}'.format(node.monitoring_address,node.client_port, node.ip,
                                                                              node.port,

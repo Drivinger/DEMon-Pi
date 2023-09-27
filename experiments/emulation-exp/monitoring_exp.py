@@ -4,7 +4,6 @@ import json
 import random
 import sqlite3
 import time
-import asyncio
 import docker
 import socket
 import requests
@@ -13,16 +12,14 @@ import queue
 import threading
 from flask import Flask, request
 from joblib import Parallel, delayed
-import subprocess
-import incl_metadata.dbConnector as dbConnector
+import connector_db as dbConnector
 import logging
 from sqlite3 import Connection
-
 from src import query_client
 
 monitoring_demon = Flask(__name__)
 parser = configparser.ConfigParser()
-parser.read('./config.ini')
+parser.read('../config.ini')
 try:
     docker_client = docker.client.from_env()
 except Exception as e:
@@ -30,8 +27,8 @@ except Exception as e:
     print("trace: {}".format(traceback.format_exc()))
     exit(1)
 experiment = None
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
+#log = logging.getLogger('werkzeug')
+#log.setLevel(logging.ERROR)
 
 
 class Run:
@@ -107,7 +104,7 @@ def get_target_count(node_count, target_count_range):
 
 def spawn_node(index, node_list, client, custom_network_name):
     try:
-        new_node = docker_client.containers.run("drivinger/meta", auto_remove=True, detach=True,
+        new_node = docker_client.containers.run("demonv1", auto_remove=True, detach=True,
                                                 network_mode=custom_network_name,
                                                 ports={'5000': node_list[index]["port"]})
     except Exception as e:
@@ -247,7 +244,7 @@ def reset_node(ip, port, docker_id):
 
 @monitoring_demon.route('/delete_nodes', methods=['GET'])
 def delete_all_nodes():
-    to_remove = docker_client.containers.list(filters={"ancestor": "drivinger/meta"})
+    to_remove = docker_client.containers.list(filters={"ancestor": "demonv1"})
     for node in to_remove:
         node.remove(force=True)
     return "OK"
@@ -275,9 +272,8 @@ def run_queries(run, query_count, failure_percent):
         alive_nodes = [item for item in run.node_list if item["is_alive"]]
         target_node = random.choice(run.node_list)
         target_key = target_node["ip"] + ":" + target_node["port"]
-
         start_time = time.time()
-        total_messages_for_query, query_result = query_client.query(alive_nodes, quorum_size, docker_ip, target_node["port"])
+        total_messages_for_query, query_result = query_client.query(alive_nodes, quorum_size, target_node["ip"], target_node["port"], docker_ip)
         time_to_query = time.time() - start_time
         save_query_in_database(run, i, failure_percent, target_key, time_to_query, total_messages_for_query,
                                True)
@@ -313,10 +309,10 @@ def update_during_run(run):
         while not run.max_round_is_reached:
             pass
         print("Max round reached: stop now")
-    # after convergence do something
     print("should start queries now")
     if parser.get('system_setting', 'query_logic') == "1":
-        failure_ratio = parser.get('system_setting', 'failure_rate')
+        print(parser.get('system_setting', 'failure_rate'))
+        failure_ratio = float(parser.get('system_setting', 'failure_rate'))
         stop_node_percentage(run, failure_ratio)
         time.sleep(20)
         run_queries(run, query_count=100, failure_percent=failure_ratio)
