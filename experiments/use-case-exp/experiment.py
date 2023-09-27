@@ -1,4 +1,3 @@
-import csv
 import sys
 
 import geopy.distance as distance

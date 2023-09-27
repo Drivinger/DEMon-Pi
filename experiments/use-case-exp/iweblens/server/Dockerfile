@@ -7,12 +7,12 @@ RUN pip3 install --upgrade pip
 WORKDIR /app
 
 ## copy requirements and install packages
-COPY ./requirements.txt requirements.txt
+COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
 ## copy the source code and configs
-COPY ./yolo_tiny_configs/ yolo_tiny_configs/
-COPY ./iWebLens_server.py iWebLens_server.py
+COPY yolo_tiny_configs yolo_tiny_configs/
+COPY iWebLens_server.py iWebLens_server.py
 
 ## FLASK runs on defualt 5000, expose this port
 EXPOSE 5000
