@@ -17,3 +17,8 @@ addressing the tradeoffs between the Quality of Service of monitoring and resour
 as a lightweight and portable container-based monitoring system and evaluate it through empirical experiments. We also present an
 experimental use case demonstrating the feasibility of the proposed system. The results show that DEMon efficiently disseminates and
 retrieves the monitoring information, addressing the above-mentioned challenges.
+
+## Contributions
+- We present [`DEMon`](./src/demon), a reliable and self-adjusting monitoring system designed for extremely dynamic edge environments, offering both efficient and decentralized information dissemination.
+- Introducing a stochastic group communication protocol featuring a gossip-based information dissemination algorithm and the [`impact of its hyperparameter`](./experiments/emulation-exp). Additionally, we propose the Leaderless Quorum Consensus (LQC) protocol for efficient and trustworthy data retrieval.
+- We also provide a practical real-world use case implementation, demonstrating a [`mobile computing edge scenario on a Raspberry Pi`](./experiments/use-case-exp).
