@@ -49,11 +49,24 @@ Edit the [`config.ini`](../config.ini). Ensure the `docker_ip` parameter is corr
    python monitoring_exp.py
 ```
 
-Run the `monitoring_exp.py` script. It launches a Flask server with your hosts ip-address with key endpoints:
+Run the `monitoring_exp.py` script. It launches a Flask Server with your hosts ip-address with key endpoints:
 
 - To initiate experiments based on the configured settings, visit: `http://_ip_:4000/start`
 - To delete all Docker containers with the specified Docker image at any time, visit: `http://_ip_:4000/delete_nodes`
 
+Make sure that this Flask Sever is reachable from your Docker Containers.
+
 ### 4. Create Demon Nodes
 
 Once `monitoring_exp.py` is running, it will create the specified range of Demon nodes and start Demon instances in each of them. If not specified each run will end when converged till all combinations of the configured parameters are tested. When done, all docker container will be deleted. 
+
+
+### 5. It's not my job to run/debug this script
+
+If you have no intention to run this script or deal with possible issues you can view the results of our experiments via our [`plots`](./plots).
+
+### 6. It's still not my job to run/debug this script, but I did it anyway
+
+If you tried to run this script and encountered issues, please let us know. We will try to help you as soon as possible.
+If you found a bug please do so as well. :-) 
+
