@@ -12,5 +12,4 @@ queue
 threading
 Flask
 joblib
-connector_db
 logging
