@@ -4,7 +4,7 @@ This is an emulation of the Demon Monitoring System, comprising three primary co
 
 ## Components
 
-### 1. [`monitoring_exp.py`](../monitoring_exp.py)
+### 1. [`monitoring_exp.py`](./monitoring_exp.py)
 
 The `monitoring_exp` component is responsible for creating and scaling Docker containers running Demon. It provides a Flask server with essential endpoints for controlling experiments.
 
