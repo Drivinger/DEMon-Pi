@@ -8,7 +8,7 @@ Demon is the core component of this repository, responsible for implementing a s
 
 ## Running Demon
 
-Demon can be run in experimental environments by using for example containers or a Raspberry Pi's.
+Demon can be run in experimental environments by using for example containers or Raspberry Pi's.
 
 ### Docker Container
 
