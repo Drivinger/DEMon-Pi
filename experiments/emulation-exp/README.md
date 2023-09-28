@@ -43,7 +43,13 @@ Edit the [`config.ini`](../config.ini). Ensure the `docker_ip` parameter is corr
 - `is_send_data_back` if set to 1 benchmark data of each node will be sent to the monitoring_exp component. This data is used for benchmarking, but can highly infect the networking performance of your system.
 
 
-### 3. Start `monitoring_exp.py`
+### 3. Prepare and start `monitoring_exp.py`
+#### Requirements
+The non-standard library packages and modules are listed in [`requirements.txt`](./requirements.txt). Install them using the following command:
+```bash
+pip install -r requirements.txt
+```
+#### Start
 
 ```bash
    python monitoring_exp.py
