@@ -202,7 +202,6 @@ def start_node():
     return "OK"
 
 
-# Todo: add method to ask for registration
 @gossip.route('/register_new_node', methods=['POST'])
 def register_new_node():
     Node.instance().node_list.append(request.get_json())

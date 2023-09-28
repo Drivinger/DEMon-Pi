@@ -81,7 +81,7 @@ class Node:
         while self.is_alive:
             if self.push_mode == "1":
                 print("Pushing data", flush=True)
-                if self.cycle % 3 == 0 and self.cycle != 0:
+                if self.cycle % 10 == 0 and self.cycle != 0:
                     self.push_latest_data_and_delete_after_push()
             self.cycle += 1
             self.transmit(target_count)

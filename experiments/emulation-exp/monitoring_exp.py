@@ -57,7 +57,7 @@ class Run:
 
 class Experiment:
     def __init__(self, node_count_range, gossip_rate_range, target_count_range, run_count, monitoring_address_ip,
-                 time_mode, push_mode):
+                 is_send_data_back, push_mode):
         self.db_id = -1
         self.node_count_range = node_count_range
         self.gossip_rate_range = gossip_rate_range
@@ -68,7 +68,7 @@ class Experiment:
         self.db = dbConnector.DemonDB()
         self.query_queue = queue.Queue()
         self.query_thread = None
-        self.time_mode = time_mode
+        self.is_send_data_back = is_send_data_back
         self.push_mode = push_mode
         self.NodeDB = dbConnector.NodeDB()
 
@@ -157,7 +157,7 @@ def nodes_are_ready(run):
 def start_node(index, run, database_address, monitoring_address, ip):
     to_send = {"node_list": run.node_list, "target_count": run.target_count, "gossip_rate": run.gossip_rate,
                "database_address": database_address, "monitoring_address": monitoring_address,
-               "node_ip": run.node_list[index]["ip"], "is_send_data_back": experiment.time_mode,
+               "node_ip": run.node_list[index]["ip"], "is_send_data_back": experiment.is_send_data_back,
                "push_mode": experiment.push_mode, "client_port": "4000"}
     try:
         time.sleep(0.01)
