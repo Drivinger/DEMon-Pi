@@ -6,6 +6,7 @@ from matplotlib import cm, rcParams
 dbname = 'experiments.db'
 
 
+
 class DemonDataDB:
     def __init__(self):
         self.connection = sqlite3.connect(dbname, check_same_thread=False)
@@ -29,7 +30,7 @@ class DemonDataDB:
         try:
             self.connection = sqlite3.connect(dbname, check_same_thread=False)
             self.cursor = self.connection.cursor()
-            #round < 8 -> 7 is convergence round
+            # round < 8 -> 7 is convergence round
             self.cursor.execute(
                 "SELECT SUM(delta_byte) from delta_each_round_storage WHERE round < 8 AND run_id = 1")
             rounds = self.cursor.fetchall()
@@ -190,6 +191,7 @@ class DemonDataDB:
         except Exception as e:
             print("Error DB Query: {}".format(e))
             return []
+
     def get_fresh_data_grouped_by_round_gc_3(self):
         try:
             self.connection = sqlite3.connect(dbname, check_same_thread=False)
@@ -201,6 +203,7 @@ class DemonDataDB:
         except Exception as e:
             print("Error DB Query: {}".format(e))
             return []
+
     def get_fresh_data_grouped_by_round_gc_4(self):
         try:
             self.connection = sqlite3.connect(dbname, check_same_thread=False)
@@ -254,7 +257,7 @@ class DemonDataDB:
             self.connection = sqlite3.connect(dbname, check_same_thread=False)
             self.cursor = self.connection.cursor()
             self.cursor.execute(
-                "SELECT node_count, gossip_rate,target_count, AVG(convergence_time) FROM run_gc_gr_time WHERE NOT id =34 AND NOT id = 36 AND NOT id = 45 AND NOT id = 44 AND NOT id = 39 AND NOT id = 24 AND NOT id = 41 AND NOT id = 42 AND NOT id = 37 AND NOT id = 9 AND NOT id = 7 AND NOT id = 10 AND NOT id= 11 AND NOT id = 15 AND NOT id = 14 AND NOT id = 21 AND NOT id = 27 "
+                "SELECT node_count, gossip_rate,target_count, AVG(convergence_time) FROM run_gc_gr_time "
                 "GROUP BY node_count, gossip_rate, target_count")
             grouped_runs = self.cursor.fetchall()
             self.connection.close()
@@ -319,12 +322,15 @@ def plot_barplot_node_count_convergence_round():
     ax.bar(index + 2 * bar_width, data_target_4_round['y'], bar_width, edgecolor='black', color="mediumseagreen",
            label='gossip_count = 4', hatch='//')
     ax.set_xticks(index + bar_width)
-    ax.set_xticklabels(data_target_4_round['x'])
-    ax.set_ylabel('Gossip rounds')
-    ax.set_xlabel('Number of nodes')
-    ax.legend()
-    # plt.savefig('convergence_plot_demon_all_gc_barplot.png')
-    # plt.savefig('convergence_plot_demon_all_gc_barplot.pdf')
+    ax.set_xticklabels(data_target_4_round['x'], fontsize=12)
+    ax.set_ylabel('Gossip rounds', fontsize=16)
+    ax.set_xlabel('# of nodes', fontsize=16)
+    ax.legend(fontsize=14)
+    plt.savefig('convergence_plot_demon_all_gc_barplot.png')
+    plt.savefig('convergence_plot_demon_all_gc_barplot.pdf')
+    plt.yticks(fontsize=12)
+    plt.xticks(fontsize=12)
+    plt.legend(fontsize=14)
     plt.show()
     plt.clf()
 
@@ -361,12 +367,14 @@ def plot_rounds_number_of_known_nodes():
     plt.plot(round_data_to_plot_4['x'], round_data_to_plot_4['y'], color="mediumseagreen", marker='o',
              label="gossip_count=4")
 
-    plt.xlabel('Rounds')
-    plt.ylabel('Number of new nodes known')
-    plt.legend()
+    plt.xlabel('Rounds', fontsize=16)
+    plt.ylabel('# of new nodes known', fontsize=16)
+    plt.legend(fontsize=14)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
     plt.grid(True)
-    # plt.savefig('demon_nd_per_round_all_gc_nc_300.png')
-    # plt.savefig('demon_nd_per_round_all_gc_nc_300.pdf')
+    plt.savefig('demon_nd_per_round_all_gc_nc_300.png')
+    plt.savefig('demon_nd_per_round_all_gc_nc_300.pdf')
     plt.show()
     plt.clf()
 
@@ -383,7 +391,7 @@ def plot_fogmon_demon_messages_all_gc():
     for group in demon_db.get_runs_grouped_by_node_target_avg():
         node_count = group[0]
         target_count = group[1]
-        avg_convergence_message_count = group[3]
+        avg_convergence_message_count = group[3]/1000
         if target_count == target_count_2:
             data_target_2['x'].append(node_count)
             data_target_2['y'].append(avg_convergence_message_count)
@@ -400,7 +408,7 @@ def plot_fogmon_demon_messages_all_gc():
     for group in demon_db.get_fogmon_runs_grouped_by_node_target_avg():
         node_count = group[0]
         target_count = group[1]
-        avg_convergence_message_count = group[3]
+        avg_convergence_message_count = group[3]/1000
         if target_count == target_count_2:
             data_target_2_fog['x'].append(node_count)
             data_target_2_fog['y'].append(avg_convergence_message_count)
@@ -410,45 +418,46 @@ def plot_fogmon_demon_messages_all_gc():
         elif target_count == target_count_4:
             data_target_4_fog['x'].append(node_count)
             data_target_4_fog['y'].append(avg_convergence_message_count)
-    #plt.xlabel('# of nodes', fontsize=16)
-    #plt.ylabel('# of messages', fontsize=16)
+    # plt.xlabel('# of nodes', fontsize=16)
+    # plt.ylabel('# of messages', fontsize=16)
     # plt.title('Convergence Messages with different Gossip Count')
-    #plt.legend(fontsize=14)
-    #plt.xticks(fontsize=12)
-    #plt.yticks(fontsize=12)
+    # plt.legend(fontsize=14)
+    # plt.xticks(fontsize=12)
+    # plt.yticks(fontsize=12)
     rcParams.update({'figure.autolayout': True})
     plt.plot(data_target_2['x'], data_target_2['y'], color="tomato", marker='^', label="Demon")
     plt.plot(data_target_2_fog['x'], data_target_2_fog['y'], color="royalblue", marker='x', label="Fog")
-    plt.xlabel('Number of nodes', fontsize=18)
-    plt.ylabel('Number of message', fontsize=18)
-    plt.legend(fontsize=16)
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
+    plt.xlabel('# of nodes', fontsize=20)
+    plt.ylabel('# of message (K)', fontsize=20)
+    plt.legend(fontsize=18)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
     plt.grid(True)
     plt.savefig('convergence_plot_demon_fogmon_2_gc_messages.png')
     plt.savefig('convergence_plot_demon_fogmon_2_gc_messages.pdf')
     plt.show()
     plt.clf()
+
     plt.plot(data_target_3['x'], data_target_3['y'], color="tomato", marker='^', label="Demon")
     plt.plot(data_target_3_fog['x'], data_target_3_fog['y'], color="royalblue", marker='x', label="Fog")
-    plt.xlabel('Number of nodes', fontsize=18)
-    plt.ylabel('Number of message', fontsize=18)
-    plt.legend(fontsize=16)
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
+    plt.xlabel('# of nodes', fontsize=20)
+    plt.ylabel('# of message (k)', fontsize=20)
+    plt.legend(fontsize=18)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
     plt.grid(True)
     plt.savefig('convergence_plot_demon_fogmon_3_gc_messages.png')
     plt.savefig('convergence_plot_demon_fogmon_3_gc_messages.pdf')
     plt.show()
-
     plt.clf()
+
     plt.plot(data_target_4['x'], data_target_4['y'], color="tomato", marker='^', label="Demon")
     plt.plot(data_target_4_fog['x'], data_target_4_fog['y'], color="royalblue", marker='x', label="Fog")
-    plt.xlabel('Number of nodes', fontsize=18)
-    plt.ylabel('Number of message', fontsize=18)
-    plt.legend(fontsize=16)
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
+    plt.xlabel('# of nodes', fontsize=20)
+    plt.ylabel('# of message (K)', fontsize=20)
+    plt.legend(fontsize=18)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
     plt.grid(True)
     plt.savefig('convergence_plot_demon_fogmon_4_gc_messages.png')
     plt.savefig('convergence_plot_demon_fogmon_4_gc_messages.pdf')
@@ -475,7 +484,7 @@ def plot_all_gr_avg_messages():
     for group in demon_db.get_runs_grouped_by_node_rate():
         node_count = group[0]
         gossip_rate = group[1]
-        avg_convergence_message_count = group[3]
+        avg_convergence_message_count = group[3]/1000
 
         # Check if the target count matches the one to plot
         if gossip_rate == gossip_rate_2:
@@ -502,7 +511,7 @@ def plot_all_gr_avg_messages():
 
     plt.plot(data_rate_8['x'], data_rate_8['y'], color="goldenrod", marker='2', label=f'gossip_rate = 20')
     plt.xlabel('# of nodes', fontsize=16)
-    plt.ylabel('# of messages', fontsize=16)
+    plt.ylabel('# of messages (K)', fontsize=16)
     # plt.title('Convergence Messages with different Gossip Count')
     plt.legend(fontsize=14)
     plt.xticks(fontsize=12)
@@ -527,7 +536,7 @@ def plot_all_gc_avg_messages():
     for group in demon_db.get_runs_grouped_by_node_target_avg():
         node_count = group[0]
         target_count = group[1]
-        avg_convergence_message_count = group[3]
+        avg_convergence_message_count = group[3]/1000
         if target_count == gossip_count_2:
             data_target_2['x'].append(node_count)
             data_target_2['y'].append(avg_convergence_message_count)
@@ -541,15 +550,18 @@ def plot_all_gc_avg_messages():
     plt.plot(data_target_3['x'], data_target_3['y'], color="royalblue", marker='x', label=f'gossip_count = 3')
     plt.plot(data_target_4['x'], data_target_4['y'], color="mediumseagreen", marker='o',
              label=f'gossip_count = 4')
-    plt.xlabel('Number of nodes')
-    plt.ylabel('Number of messages')
+    plt.xlabel('# of nodes', fontsize=16)
+    plt.ylabel('# of messages (K)', fontsize=16)
     # plt.title('Convergence Messages with different Gossip Count')
-    plt.legend()
+    plt.legend(fontsize=14)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
     plt.grid(True)
     plt.savefig('convergence_plot_demon_all_gc_message.png')
     plt.savefig('convergence_plot_demon_all_gc_message.pdf')
     plt.show()
     plt.clf()
+
 
 def plot_aoi():
     demon_db = DemonDataDB()
@@ -575,19 +587,17 @@ def plot_aoi():
     # plt.plot(aoi_2['x'], cumulative_y_2, color="tomato", marker='^', label=f'gossip_count = 2')
     plt.plot(aoi_3['x'], cumulative_y_3, color="royalblue", marker='x', label=f'aoi')
     # plt.plot(aoi_4['x'], cumulative_y_4, color="mediumseagreen", marker='o', label=f'gossip_count = 4')
-    plt.ylabel('Average AoI per node')
-    plt.xlabel('Time [s]')
-
-    plt.legend()
+    plt.ylabel('Average AoI per node', fontsize=16)
+    plt.xlabel('Time [s]', fontsize=16)
+    plt.legend(fontsize=14)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
     # plt.yscale('log')# Show the plot
     plt.grid(True)
     plt.savefig('aoi_gc_3.png')
     plt.savefig('aoi_gc_3.pdf')
     plt.show()
     plt.clf()
-
-
-
 
 
 def plot_pushed_data_every_10th_round():
@@ -636,23 +646,27 @@ def plot_pushed_data_every_10th_round():
             delta_storage_300['y'].append(delta_kilo_byte)
 
     # plt_1 = plt.figure(figsize=(10, 7.5))
-    plt.plot(delta_storage_50['x'], delta_storage_50['y'], color="tomato", marker='^', label=f'node_count = 50')
-    plt.plot(delta_storage_100['x'], delta_storage_100['y'], color="royalblue", marker='x', label=f'node_count = 100')
+    plt.plot(delta_storage_50['x'], delta_storage_50['y'], color="tomato", marker='^', label=f'n = 50')
+    plt.plot(delta_storage_100['x'], delta_storage_100['y'], color="royalblue", marker='x', label=f'n = 100')
     plt.plot(delta_storage_150['x'], delta_storage_150['y'], color="mediumseagreen", marker='o',
-             label=f'node_count = 150')
-    plt.plot(delta_storage_200['x'], delta_storage_200['y'], color="goldenrod", marker='*', label=f'node_count = 200')
-    plt.plot(delta_storage_250['x'], delta_storage_250['y'], color="indigo", marker='P', label=f'node_count = 250')
-    plt.plot(delta_storage_300['x'], delta_storage_300['y'], color="dimgray", marker='>', label=f'node_count = 300')
+             label=f'n = 150')
+    plt.plot(delta_storage_200['x'], delta_storage_200['y'], color="goldenrod", marker='*', label=f'n = 200')
+    plt.plot(delta_storage_250['x'], delta_storage_250['y'], color="indigo", marker='P', label=f'n = 250')
+    plt.plot(delta_storage_300['x'], delta_storage_300['y'], color="dimgray", marker='>', label=f'n = 300')
 
-    plt.xlabel('Rounds')
-    plt.ylabel('Storage per node [KB]')
+    plt.xlabel('Rounds', fontsize=20)
+    plt.ylabel('Storage per node [KB]', fontsize=20)
     # plt.title('Convergence Messages with different Gossip Count')
-    plt.legend(loc="upper left")
+    #put legend outside of plot, on top
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.22),
+          ncol=3, fontsize=16, frameon=False)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
 
     # Show the plot
     plt.grid(True)
-    plt.savefig('push_storage_per_node.png')
-    plt.savefig('push_storage_per_node.pdf')
+    plt.savefig('push_storage_per_node.png', bbox_inches='tight')
+    plt.savefig('push_storage_per_node.pdf', bbox_inches='tight')
     plt.show()
     plt.clf()
 
@@ -684,24 +698,32 @@ def plot_new_data_per_round_incl_after_conv():
     # convergence points:
     # 9 11 12 13 15 16
 
-    plt.plot(fd_by_rounds_gc_2_after['x'], fd_by_rounds_gc_2_after['y'], color="tomato", marker='^', label="gossip_count=2", markersize=4) #29 30
-    plt.plot(fd_by_rounds_gc_2_after['x'][30], fd_by_rounds_gc_2_after['y'][30], marker="D", color='black', markersize=6)
-    plt.plot(fd_by_rounds_gc_3_after['x'], fd_by_rounds_gc_3_after['y'], color="royalblue", marker='x', label="gossip_count=3", markersize=4) #20 22
-    plt.plot(fd_by_rounds_gc_3_after['x'][21], fd_by_rounds_gc_3_after['y'][21], marker="D", color='black', markersize=6)
-    plt.plot(fd_by_rounds_gc_4_after['x'], fd_by_rounds_gc_4_after['y'], color="mediumseagreen", marker='o', label="gossip_count=4", markersize=4) #19
-    plt.plot(fd_by_rounds_gc_4_after['x'][18], fd_by_rounds_gc_4_after['y'][18], marker="D", color='black',  label = "Convergence" , markersize=6)
+    plt.plot(fd_by_rounds_gc_2_after['x'], fd_by_rounds_gc_2_after['y'], color="tomato", marker='^',
+             label="gossip_count=2", markersize=4)  # 29 30
+    plt.plot(fd_by_rounds_gc_2_after['x'][30], fd_by_rounds_gc_2_after['y'][30], marker="D", color='black',
+             markersize=6)
+    plt.plot(fd_by_rounds_gc_3_after['x'], fd_by_rounds_gc_3_after['y'], color="royalblue", marker='x',
+             label="gossip_count=3", markersize=4)  # 20 22
+    plt.plot(fd_by_rounds_gc_3_after['x'][21], fd_by_rounds_gc_3_after['y'][21], marker="D", color='black',
+             markersize=6)
+    plt.plot(fd_by_rounds_gc_4_after['x'], fd_by_rounds_gc_4_after['y'], color="mediumseagreen", marker='o',
+             label="gossip_count=4", markersize=4)  # 19
+    plt.plot(fd_by_rounds_gc_4_after['x'][18], fd_by_rounds_gc_4_after['y'][18], marker="D", color='black',
+             label="Convergence", markersize=6)
 
     # plt.plot(data_target_4['x'], data_target_4['y'], 'mo-', label=f'DEMon')
 
-    plt.xlabel('Rounds')
-    plt.ylabel('Number of new data per node')
-    plt.title('Convergence Messages with different Gossip Count')
-    plt.legend()
+    plt.xlabel('Rounds', fontsize=16)
+    plt.ylabel('# of new data per node', fontsize=16)
+    #plt.title('Convergence Messages with different Gossip Count')
+    plt.legend(fontsize=14)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
 
     # Show the plot
     plt.grid(True)
-    # plt.savefig('after_convergence_plot_demon_fd_per_node_nc_300.png')
-    # plt.savefig('after_convergence_plot_demon_fd_per_node_nc_300.pdf')
+    plt.savefig('after_convergence_plot_demon_fd_per_node_nc_300.png')
+    plt.savefig('after_convergence_plot_demon_fd_per_node_nc_300.pdf')
     plt.show()
     plt.clf()
 
@@ -714,7 +736,7 @@ def plot_storage_per_node_after_conv():
               demonDB.get_delta_byte_grouped_by_node_count_and_round_200()[0][0] / (200 * 1024),
               demonDB.get_delta_byte_grouped_by_node_count_and_round_250()[0][0] / (250 * 1024),
               demonDB.get_delta_byte_grouped_by_node_count_and_round_300()[0][0] / (300 * 1024)]
-    #print(values[5])
+    # print(values[5])
 
     colors = ['tomato', 'royalblue', 'mediumseagreen', 'goldenrod', 'indigo', 'dimgray']
     hatches = ['o', '+', 'x', '\\', '*', '.']
@@ -723,13 +745,16 @@ def plot_storage_per_node_after_conv():
         plt.bar(categories[i], values[i], hatch=hatches[i], edgecolor='black', color=colors[i],
                 label='node_count = {}'.format(categories[i]))
     plt.yscale('log')
-    plt.xlabel('System size')
-    plt.ylabel('Storage per node [KB] (log scale)')
-    #plt.legend()
-    plt.savefig('storage_convergence_pernode.png')
-    plt.savefig('storage_convergence_pernode.pdf')
+    plt.xlabel('System size', fontsize=18)
+    plt.ylabel('Storage per node [KB]', fontsize=18)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    # plt.legend()
+    plt.savefig('storage_convergence_pernode.png', bbox_inches='tight')
+    plt.savefig('storage_convergence_pernode.pdf', bbox_inches='tight')
     plt.show()
     plt.clf()
+
 
 def plot_bandwidth_per_round():
     # Bandwidth per round plot
@@ -758,20 +783,26 @@ def plot_bandwidth_per_round():
         round_data_to_plot_4_bytes['x'].append(r)
         round_data_to_plot_4_bytes['y'].append(byte_sum / (1048576 * 300 * 3))
 
-    plt.plot(round_data_to_plot_2_bytes['x'], round_data_to_plot_2_bytes['y'], color="tomato", marker='^', label="gossip_count=2")
-    plt.plot(round_data_to_plot_3_bytes['x'], round_data_to_plot_3_bytes['y'], color="royalblue", marker='x', label="gossip_count=3")
-    plt.plot(round_data_to_plot_4_bytes['x'], round_data_to_plot_4_bytes['y'], color="mediumseagreen", marker='o', label="gossip_count=4")
-    plt.xlabel('Rounds')
-    plt.ylabel('Node bandwidth [MB]')
+    plt.plot(round_data_to_plot_2_bytes['x'], round_data_to_plot_2_bytes['y'], color="tomato", marker='^',
+             label="gc=2")
+    plt.plot(round_data_to_plot_3_bytes['x'], round_data_to_plot_3_bytes['y'], color="royalblue", marker='x',
+             label="gc=3")
+    plt.plot(round_data_to_plot_4_bytes['x'], round_data_to_plot_4_bytes['y'], color="mediumseagreen", marker='o',
+             label="gc=4")
+    plt.xlabel('Rounds', fontsize=18)
+    plt.ylabel('Node bandwidth [MB]', fontsize=18)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
     # plt.title('Convergence Messages with different Gossip Count')
-    plt.legend()
+    plt.legend(fontsize=18, loc='upper right')
 
     # Show the plot
     plt.grid(True)
-    # plt.savefig('convergence_plot_demon_bandwidth_per_node_nc_300.png')
-    # plt.savefig('convergence_plot_demon_bandwidth_per_node_nc_300.pdf')
+    plt.savefig('convergence_plot_demon_bandwidth_per_node_nc_300.png', bbox_inches='tight')
+    plt.savefig('convergence_plot_demon_bandwidth_per_node_nc_300.pdf', bbox_inches='tight')
     plt.show()
     plt.clf()
+
 
 def plot_3d_time_gr_gc():
     demon_db = DemonDataDB()
@@ -853,59 +884,25 @@ def plot_3d_time_gr_gc():
     # append all data to one list
     gc_gr_data = [gc_2_gr_2, gc_2_gr_4, gc_2_gr_6, gc_2_gr_8, gc_3_gr_2, gc_3_gr_4, gc_3_gr_6, gc_3_gr_8, gc_4_gr_2,
                   gc_4_gr_4, gc_4_gr_6, gc_4_gr_8]
-    print(gc_gr_data[0])
 
-    # Show the plot
-    # plt.grid(True)
-    # plt.savefig("convergence_plot_all_gr_gc{0}.png".format(i))
-    # plt.savefig('convergence_plot_all_gr_gc{0}.pdf'.format(i))
-    # plt.show()
-
-    # Show the plot
-    # plt.grid(True)
-    # plt.savefig("convergence_plot_all_gc_gr{0}.png".format(i))
-    # plt.savefig('convergence_plot_all_gc_gr{0}.pdf'.format(i))
-    # plt.show()
-
-    # Create a 3D plot
-    #fig = plt.figure()
-    #ax = fig.add_subplot(111, projection='3d')
-
-    # Scatter plot
-    # ax.scatter(nc_300['x'], nc_300['y'], nc_300['z'], c='b', marker='o')
-
-    # Set labels for each axis
-    # ax.set_xlabel('goosip_rate')
-    # ax.set_ylabel('gossip_count')
-    # ax.set_zlabel('Time [s]')
-    # rotate the 3d plot 90 degrees around the z axis
-    # ax.view_init(azim=45)
-    # plt.savefig("test2.png")
-    # plt.savefig('test2.pdf')
-    # Show the plot
-
-    # plt.show()
-    # Create a 3D bar plot using Plotly
     x = nc_300['x']
     y = nc_300['y']
     z = nc_300['z']
-    # Create a figure and 3D axis
+
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    # Define bar width
+
     bar_width = 2.5
     bar_length = 0.5
 
-    # Shift x and y positions to center the bars
-    #y[0] = 0
     start = min(z) - 100
     x_centered = np.array(x) - bar_width / 2
     y_centered = np.array(y) - bar_length / 2
     z_scaled = np.array(z) - start
 
-    #COLORMAP:
-    colormap = cm.viridis_r  # You can choose a different colormap here
+    # COLORMAP:
+    colormap = cm.turbo  # You can choose a different colormap here
     z_normalized = np.array(z_scaled) / max(z_scaled)
     colors = [colormap(z) for z in z_normalized]
     ax.bar3d(x_centered, y_centered, start, bar_width, bar_length, z_scaled, shade=True, color=colors)
@@ -921,66 +918,10 @@ def plot_3d_time_gr_gc():
     ax.invert_xaxis()
     ax.set_zlim(start, max(z))
 
-
     plt.show()
     fig.savefig("time3dplot.png")
     fig.savefig('time3dplot.pdf')
     plt.clf()
-
-
-# Press the green button in the gutter to run the script.
-def get_data_into_new_database():
-    source_db = sqlite3.connect('aoi.db')
-    source_cursor = source_db.cursor()
-
-    # Connect to the destination database (where you want to add the table)
-    destination_db = sqlite3.connect('demonDB_Server_basic.db')
-    destination_cursor = destination_db.cursor()
-
-    # Define the table name you want to copy
-    table_name = 'age_of_information'
-
-    # Execute a SELECT statement to retrieve the data from the source table
-    source_cursor.execute(f'SELECT * FROM {table_name}')
-    rows = source_cursor.fetchall()
-
-    # Create the same table in the destination database (assuming it doesn't exist yet)
-    # You can get the table schema by querying the source database's schema if needed.
-    # For simplicity, we assume the table already exists in the destination database.
-    # If not, you can create it with CREATE TABLE statement.
-    # destination_cursor.execute('CREATE TABLE IF NOT EXISTS ...')
-
-    # Insert the data into the destination table
-    dest_tabl = 'age_of_information'
-    for row in rows:
-        print(row)
-        destination_cursor.execute(f'INSERT INTO {dest_tabl} VALUES (?, ?, ?, ?, ?, ?, ?)', row)
-
-    # Commit the changes and close the database connections
-    destination_db.commit()
-
-    source_cursor.close()
-    source_db.close()
-    destination_cursor.close()
-    destination_db.close()
-
-def make_tables():
-    connection = sqlite3.connect('demonDB_Server_basic.db', check_same_thread=False)
-    cursor = connection.cursor()
-
-    cursor.execute(
-        "CREATE TABLE IF NOT EXISTS age_of_information ("
-        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "run_id INTEGER, "
-        "node_count INTEGER, "
-        "gossip_count INTEGER, "
-        "snapshot_timer INTEGER, "
-        "ip INTEGER,"
-        "aoi INTEGER)"
-    )
-    connection.commit()
-    connection.close()
-
 
 if __name__ == '__main__':
     plot_barplot_node_count_convergence_round()
@@ -996,4 +937,4 @@ if __name__ == '__main__':
     plot_3d_time_gr_gc()
 
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
