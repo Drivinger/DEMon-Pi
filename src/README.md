@@ -69,3 +69,7 @@ Where the parameters are defined as follows:
 - The endpoints `/stop_node` and `/reset_node` can be used to stop or reset a node via a GET-Request.
 - The endpoint `/get_recent_data_from_node` can be used to retrieve the most recent monitoring data from a node via a GET-Request.
 - In order to retrieve the complete in memory data from a node `/get_data_from_node` can be used via a GET-Request.
+
+
+# Query Client
+Provides an importable method to query the demon system for trustable data.
