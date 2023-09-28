@@ -8,11 +8,11 @@ This is an emulation of the Demon Monitoring System, comprising three primary co
 
 The `monitoring_exp` component is responsible for creating and scaling Docker containers running Demon. It provides a Flask server with essential endpoints for controlling experiments.
 
-### 2. `demon`
+### 2. [`demon`](../../src/demon)
 
-The `demon` component is the core of the system, running within each Docker container. It performs monitoring and management tasks, making it an integral part of the Demon Monitoring System.
+The `demon` component is the core of the system, running within each Docker container. It performs monitoring and management tasks, making it the heart of the Demon Monitoring System.
 
-### 3. `config.ini`
+### 3. [`config.ini`](../config.ini)
 
 The `config` component allows you to configure experiment hyperparameters. Customize the behavior of the Demon Monitoring System by editing the `config.ini` file.
 
@@ -22,17 +22,32 @@ Follow these steps to run the Demon Monitoring System emulation:
 
 ### 1. Build the Docker Image
 
-In the `src/demon` directory, build the Docker image using the provided `dockerImage.dockerfile`:
+In the [`demon`](../../src/demon) directory, build the Docker image using the provided [`Dockerfile`](../../src/demon/Dockerfile):
     
    ```bash
-docker build -f dockerImage.dockerfile -t demonv1 .
+docker build -f ../../src/demon/Dockerfile -t demonv1 .
 ```
 
 ### 2. Configure Parameters
 
-Edit the `config.ini` file in the `config` directory. Ensure the `docker_ip` parameter is correctly set for communication with the Docker client.
+Edit the [`config.ini`](../config.ini). Ensure the `docker_ip` parameter is correctly set for communication with the Docker client. Besides that following parameters can be configured:
+- `node_range` - the range of Demon nodes to be created (ascending order). Note that the the number of nodes is equal to the number of DEmon containers created.
+- `target_count_range` - the range of target counts (= gossip count: describes the number of nodes updated from one node in one gossip round) to be used in experiments
+- `gossip_rate_range` - the range of gossip rates (interval between each gossip round) to be used in experiments
+- `runs` - the number of runs to be performed for each setting (total number of different executions = runs * len(target_count_range) * len(gossip_rate_range) * len(node_range))
+- `continue_after_convergence` if set to 1 the run will continue after convergence is reached (all nodes have the same state)
+- `push_mode` if set to 1 the data of each node will be pushed to the database every 10th run. This mode can affect the networking performance of your system.
+- `query_logic` if set to 1 the query logic will be used (see paper for details). It uses the [`query_client`](../../src/query_client.py) to query the Demon nodes for their state. This mode only works, when `continue_after_convergence` is not set to 1.
+- `failure_rate` the rate at which nodes fail (0.0 - 1.0). This param is only used for experiments with `query_logic`.
+- `docker_ip` the ip address of the docker client.
+- `is_send_data_back` if set to 1 benchmark data of each node will be sent to the monitoring_exp component. This data is used for benchmarking, but can highly infect the networking performance of your system.
+
 
 ### 3. Start `monitoring_exp.py`
+
+```bash
+   python monitoring_exp.py
+```
 
 Run the `monitoring_exp.py` script. It launches a Flask server with your hosts ip-address with key endpoints:
 
@@ -41,12 +56,4 @@ Run the `monitoring_exp.py` script. It launches a Flask server with your hosts i
 
 ### 4. Create Demon Nodes
 
-Once `monitoring_exp.py` is running, it will create a specified range of Demon nodes and start Demon instances in each of them.
-
-### 5. Monitor and Manage Experiments
-
-Observe the behavior and performance of your Demon instances during the experiments. Adjust parameters as needed in the `config.ini` file to optimize performance.
-
-### 6. Cleanup After Experiments
-
-After completing all experiments, the script will automatically delete all created nodes and provide a success message.
+Once `monitoring_exp.py` is running, it will create the specified range of Demon nodes and start Demon instances in each of them. If not specified each run will end when converged till all combinations of the configured parameters are tested. When done, all docker container will be deleted. 
