@@ -18,7 +18,7 @@ The `config` component allows you to configure experiment hyperparameters. Custo
 
 ## How to Run
 
-Follow these steps to run the Demon Monitoring System emulation:
+Follow these steps to run the Demon Monitoring System emulation: [test](monitoring_exp.py#L3)
 
 ### 1. Build the Docker Image
 
